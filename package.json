@@ -4,12 +4,12 @@
   "description": "A strongly typed, zero-dependency TypeScript client for the Deezer API, featuring rate limiting, caching, and async iterators.",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/realkalashnikov/deezer.ts.git"
+    "url": "git+https://github.com/rafael-packages/deezer.ts.git"
   },
   "bugs": {
-    "url": "https://github.com/realkalashnikov/deezer.ts/issues"
+    "url": "https://github.com/rafael-packages/deezer.ts/issues"
   },
-  "homepage": "https://github.com/realkalashnikov/deezer.ts#readme",
+  "homepage": "https://github.com/rafael-packages/deezer.ts#readme",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
