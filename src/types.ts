@@ -1,12 +1,12 @@
 export interface DeezerOptions {
   /**
-   * Timeout opcional para as requisições em milissegundos
+   * Optional request timeout in milliseconds
    * @default 5000
    */
   timeout?: number;
   /**
-   * Quantidade máxima de requisições por segundo
-   * @default 50 (limite oficial do Deezer)
+   * Maximum requests per second
+   * @default 50 (official Deezer limit)
    */
   maxRequestsPerSecond?: number;
 }

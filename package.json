@@ -1,7 +1,15 @@
 {
   "name": "@rafaelsilvadeveloper/deezer.ts",
   "version": "1.0.0",
-  "description": "Um client TypeScript fortemente tipado e com zero dependências para a API do Deezer",
+  "description": "A strongly typed, zero-dependency TypeScript client wrapper for the Deezer API",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/realkalashnikov/deezer.ts.git"
+  },
+  "bugs": {
+    "url": "https://github.com/realkalashnikov/deezer.ts/issues"
+  },
+  "homepage": "https://github.com/realkalashnikov/deezer.ts#readme",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [

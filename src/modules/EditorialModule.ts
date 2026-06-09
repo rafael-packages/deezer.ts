@@ -3,33 +3,32 @@ import type { DeezerEditorial, PaginatedResponse, DeezerAlbum, DeezerChart } fro
 
 /**
  * EditorialModule
- * Controla os blocos de escolhas editoriais, seleções da equipe do Deezer e lançamentos.
+ * Handles editorial blocks, staff picks, and releases.
  */
 export class EditorialModule extends BaseModule {
   /**
-   * Pega a lista de editoriais (seleções da semana, destaques, etc).
+   * Fetch the list of editorial selections.
    */
   public async getEditorials(limit: number = 20): Promise<PaginatedResponse<DeezerEditorial>> {
     return this.client.request<PaginatedResponse<DeezerEditorial>>('/editorial', { limit });
   }
 
   /**
-   * Pega os detalhes de um editorial específico pelo ID.
+   * Fetch editorial details by ID.
    */
   public async get(id: number | string): Promise<DeezerEditorial> {
     return this.client.request<DeezerEditorial>(`/editorial/${id}`);
   }
 
   /**
-   * Retorna as paradas de sucesso (charts) daquele editorial específico.
-   * Se quiser os globais, passe id = 0.
+   * Fetch charts for a specific editorial. Use id = 0 for global charts.
    */
   public async getCharts(id: number | string = 0): Promise<DeezerChart> {
     return this.client.request<DeezerChart>(`/editorial/${id}/charts`);
   }
 
   /**
-   * Pega os novos lançamentos e recomendações separados por gêneros/editoriais.
+   * Fetch new releases and recommendations by genre/editorial.
    */
   public async getReleases(id: number | string = 0, limit: number = 20): Promise<PaginatedResponse<DeezerAlbum>> {
     return this.client.request<PaginatedResponse<DeezerAlbum>>(`/editorial/${id}/releases`, { limit });

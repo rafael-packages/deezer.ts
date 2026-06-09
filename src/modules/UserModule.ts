@@ -3,88 +3,132 @@ import type { DeezerUser, DeezerAlbum, DeezerArtist, DeezerPlaylist, DeezerTrack
 
 /**
  * UserModule
- * Coleta todas as informações de perfis públicos de usuários no Deezer.
+ * Fetch all information from public Deezer user profiles.
  */
 export class UserModule extends BaseModule {
   /**
-   * Retorna os dados básicos do perfil do usuário.
+   * Fetch basic user profile data.
    */
   public async get(id: number | string): Promise<DeezerUser> {
     return this.client.request<DeezerUser>(`/user/${id}`);
   }
 
   /**
-   * Todos os álbuns que esse usuário favoritou.
+   * Fetch albums favorited by the user.
    */
-  public async getAlbums(id: number | string, limit: number = 20): Promise<PaginatedResponse<DeezerAlbum>> {
-    return this.client.request<PaginatedResponse<DeezerAlbum>>(`/user/${id}/albums`, { limit });
+  public async getAlbums(
+    id: number | string,
+    limit: number = 20,
+    index: number = 0
+  ): Promise<PaginatedResponse<DeezerAlbum>> {
+    return this.client.request<PaginatedResponse<DeezerAlbum>>(`/user/${id}/albums`, { limit, index });
   }
 
   /**
-   * A biblioteca de artistas curtidos pelo usuário.
+   * Returns an async iterator to paginate over user's favorite albums.
    */
-  public async getArtists(id: number | string, limit: number = 20): Promise<PaginatedResponse<DeezerArtist>> {
-    return this.client.request<PaginatedResponse<DeezerArtist>>(`/user/${id}/artists`, { limit });
+  public getAlbumsIterator(id: number | string, limit: number = 20): AsyncGenerator<DeezerAlbum, void, unknown> {
+    return this.paginate<DeezerAlbum>((index) => this.getAlbums(id, limit, index));
   }
 
   /**
-   * Playlists criadas ou favoritadas por essa pessoa.
+   * Fetch artists followed by the user.
    */
-  public async getPlaylists(id: number | string, limit: number = 20): Promise<PaginatedResponse<DeezerPlaylist>> {
-    return this.client.request<PaginatedResponse<DeezerPlaylist>>(`/user/${id}/playlists`, { limit });
+  public async getArtists(
+    id: number | string,
+    limit: number = 20,
+    index: number = 0
+  ): Promise<PaginatedResponse<DeezerArtist>> {
+    return this.client.request<PaginatedResponse<DeezerArtist>>(`/user/${id}/artists`, { limit, index });
   }
 
   /**
-   * A lista de músicas favoritas (liked tracks) do usuário.
+   * Returns an async iterator to paginate over user's followed artists.
    */
-  public async getTracks(id: number | string, limit: number = 50): Promise<PaginatedResponse<DeezerTrack>> {
-    return this.client.request<PaginatedResponse<DeezerTrack>>(`/user/${id}/tracks`, { limit });
+  public getArtistsIterator(id: number | string, limit: number = 20): AsyncGenerator<DeezerArtist, void, unknown> {
+    return this.paginate<DeezerArtist>((index) => this.getArtists(id, limit, index));
   }
 
   /**
-   * O famoso 'Flow' pessoal. A inteligência do Deezer rodando para esse usuário.
+   * Fetch playlists created or followed by the user.
+   */
+  public async getPlaylists(
+    id: number | string,
+    limit: number = 20,
+    index: number = 0
+  ): Promise<PaginatedResponse<DeezerPlaylist>> {
+    return this.client.request<PaginatedResponse<DeezerPlaylist>>(`/user/${id}/playlists`, { limit, index });
+  }
+
+  /**
+   * Returns an async iterator to paginate over user's playlists.
+   */
+  public getPlaylistsIterator(id: number | string, limit: number = 20): AsyncGenerator<DeezerPlaylist, void, unknown> {
+    return this.paginate<DeezerPlaylist>((index) => this.getPlaylists(id, limit, index));
+  }
+
+  /**
+   * Fetch user's favorite/liked tracks.
+   */
+  public async getTracks(
+    id: number | string,
+    limit: number = 50,
+    index: number = 0
+  ): Promise<PaginatedResponse<DeezerTrack>> {
+    return this.client.request<PaginatedResponse<DeezerTrack>>(`/user/${id}/tracks`, { limit, index });
+  }
+
+  /**
+   * Returns an async iterator to paginate over user's liked tracks.
+   */
+  public getTracksIterator(id: number | string, limit: number = 50): AsyncGenerator<DeezerTrack, void, unknown> {
+    return this.paginate<DeezerTrack>((index) => this.getTracks(id, limit, index));
+  }
+
+  /**
+   * Fetch the user's smart Flow tracks.
    */
   public async getFlow(id: number | string, limit: number = 20): Promise<PaginatedResponse<DeezerTrack>> {
     return this.client.request<PaginatedResponse<DeezerTrack>>(`/user/${id}/flow`, { limit });
   }
 
   /**
-   * Histórico recente do que esse usuário andou escutando.
+   * Fetch the user's listening history.
    */
   public async getHistory(id: number | string, limit: number = 20): Promise<PaginatedResponse<DeezerTrack>> {
     return this.client.request<PaginatedResponse<DeezerTrack>>(`/user/${id}/history`, { limit });
   }
 
   /**
-   * Perfis que este usuário segue no Deezer.
+   * Fetch users this user is following.
    */
   public async getFollowings(id: number | string, limit: number = 20): Promise<PaginatedResponse<DeezerUser>> {
     return this.client.request<PaginatedResponse<DeezerUser>>(`/user/${id}/followings`, { limit });
   }
 
   /**
-   * Pessoas que estão seguindo esse perfil.
+   * Fetch users following this user.
    */
   public async getFollowers(id: number | string, limit: number = 20): Promise<PaginatedResponse<DeezerUser>> {
     return this.client.request<PaginatedResponse<DeezerUser>>(`/user/${id}/followers`, { limit });
   }
 
   /**
-   * Rádios que o usuário favoritou.
+   * Fetch radio stations favorited by the user.
    */
   public async getRadios(id: number | string, limit: number = 20): Promise<PaginatedResponse<DeezerRadio>> {
     return this.client.request<PaginatedResponse<DeezerRadio>>(`/user/${id}/radios`, { limit });
   }
 
   /**
-   * Podcasts assinados pelo usuário.
+   * Fetch podcasts subscribed to by the user.
    */
   public async getPodcasts(id: number | string, limit: number = 20): Promise<PaginatedResponse<DeezerPodcast>> {
     return this.client.request<PaginatedResponse<DeezerPodcast>>(`/user/${id}/podcasts`, { limit });
   }
 
   /**
-   * O Top histórico pessoal desse usuário.
+   * Fetch personal charts.
    */
   public async getCharts(id: number | string, category: 'tracks' | 'albums' | 'artists' | 'playlists' = 'tracks', limit: number = 20): Promise<PaginatedResponse<any>> {
     return this.client.request<PaginatedResponse<any>>(`/user/${id}/charts/${category}`, { limit });

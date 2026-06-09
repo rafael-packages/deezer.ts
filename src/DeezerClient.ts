@@ -18,8 +18,7 @@ import { UserModule } from './modules/UserModule';
 
 /**
  * DeezerClient
- * O Maestro principal da orquestra. Ele gerencia rate limit (filas para não tomar block da API), 
- * interceptadores e expõe os submódulos da API (albums, artists, podcasts, etc).
+ * The main orchestrator. Manages rate limiting, caching, interceptors, and exposes API modules.
  */
 export class DeezerClient {
   private static readonly API_URL = 'https://api.deezer.com';
@@ -68,29 +67,29 @@ export class DeezerClient {
   }
 
   /**
-   * Adiciona um middleware para alterar a requisição antes dela voar pro servidor do Deezer.
+   * Adds a request interceptor to modify requests before they are sent.
    */
   public useRequestInterceptor(interceptor: RequestInterceptor): void {
     this.requestInterceptors.push(interceptor);
   }
 
   /**
-   * Adiciona um middleware para interceptar e modificar o payload de resposta da API do Deezer.
+   * Adds a response interceptor to modify API response payloads.
    */
   public useResponseInterceptor(interceptor: ResponseInterceptor): void {
     this.responseInterceptors.push(interceptor);
   }
 
   /**
-   * Limpa manualmente a memória cache do client.
+   * Manually clears the client's cache.
    */
   public clearCache(): void {
     this.cache.clear();
   }
 
   /**
-   * Despacha uma requisição GET para o Deezer aplicando limits, cache e interceptadores.
-   * Não use isso diretamente a menos que um endpoint muito bizarro não esteja implementado nos submódulos.
+   * Dispatches a GET request to Deezer applying limits, cache, and interceptors.
+   * Avoid calling this directly unless access to an unmapped endpoint is needed.
    */
   public async request<T>(
     endpoint: string,
@@ -107,7 +106,7 @@ export class DeezerClient {
 
     const urlString = url.toString();
 
-    // Se tiver no cache quentinho, já devolve daqui e poupa a rede
+    // If cached, return immediately to save network requests
     if (options.cache !== false) {
       const cached = this.cache.get<T>(urlString);
       if (cached) return cached;
@@ -127,7 +126,7 @@ export class DeezerClient {
       setTimeout(() => controller.abort(), this.options.timeout);
     }
 
-    // Passa pelo túnel dos request interceptors
+    // Run through request interceptors
     for (const interceptor of this.requestInterceptors) {
       const [newUrl, newOptions] = await interceptor(requestUrl, requestOptions);
       requestUrl = newUrl;
@@ -144,21 +143,21 @@ export class DeezerClient {
 
         let data = await response.json() as any;
 
-        // O Deezer é espertinho e às vezes joga o erro dentro de um response HTTP 200 OK
+        // Deezer API sometimes returns an error inside an HTTP 200 OK response
         if (data.error) {
           throw new DeezerError(
-            data.error.message || 'Erro na API do Deezer',
+            data.error.message || 'Deezer API error',
             data.error.code,
             data.error.type
           );
         }
 
-        // Passa pelo túnel dos response interceptors
+        // Run through response interceptors
         for (const interceptor of this.responseInterceptors) {
           data = await interceptor(data);
         }
 
-        // Salva na geladeira pra economizar requests no futuro
+        // Cache the response to save future network requests
         if (options.cache !== false) {
           this.cache.set(urlString, data, options.ttl);
         }
@@ -166,12 +165,12 @@ export class DeezerClient {
         return data as T;
       } catch (error: any) {
         if (error.name === 'AbortError') {
-          throw new DeezerError('A requisição excedeu o tempo limite (timeout).');
+          throw new DeezerError('The request timed out.');
         }
         if (error instanceof DeezerError) {
           throw error;
         }
-        throw new DeezerError(`Falha na requisição: ${error.message}`);
+        throw new DeezerError(`Request failed: ${error.message}`);
       }
     };
 

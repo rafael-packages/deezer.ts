@@ -3,53 +3,75 @@ import type { DeezerArtist, DeezerAlbum, DeezerTrack, PaginatedResponse, DeezerP
 
 /**
  * ArtistModule
- * Focado no artista: top faixas, álbuns, fãs e relacionados.
+ * Handles artist catalog operations including top tracks, albums, fans, and related artists.
  */
 export class ArtistModule extends BaseModule {
   /**
-   * Pega os dados principais do artista (imagem, nome, stats).
+   * Fetch core artist data (image, name, stats).
    */
   public async get(id: number | string): Promise<DeezerArtist> {
     return this.client.request<DeezerArtist>(`/artist/${id}`);
   }
 
   /**
-   * As top 10 músicas mais famosas do artista no Deezer.
+   * Fetch top tracks of the artist.
    */
   public async getTop(id: number | string, limit: number = 10): Promise<PaginatedResponse<DeezerTrack>> {
     return this.client.request<PaginatedResponse<DeezerTrack>>(`/artist/${id}/top`, { limit });
   }
 
   /**
-   * Todos os álbuns, singles e EPs já lançados pelo artista.
+   * Fetch albums, singles, and EPs of the artist.
    */
-  public async getAlbums(id: number | string, limit: number = 25): Promise<PaginatedResponse<DeezerAlbum>> {
-    return this.client.request<PaginatedResponse<DeezerAlbum>>(`/artist/${id}/albums`, { limit });
+  public async getAlbums(
+    id: number | string,
+    limit: number = 25,
+    index: number = 0
+  ): Promise<PaginatedResponse<DeezerAlbum>> {
+    return this.client.request<PaginatedResponse<DeezerAlbum>>(`/artist/${id}/albums`, { limit, index });
   }
 
   /**
-   * Descubra artistas parecidos com este (recomendação do Deezer).
+   * Returns an async iterator to paginate over artist's albums.
+   */
+  public getAlbumsIterator(id: number | string, limit: number = 25): AsyncGenerator<DeezerAlbum, void, unknown> {
+    return this.paginate<DeezerAlbum>((index) => this.getAlbums(id, limit, index));
+  }
+
+  /**
+   * Fetch related artists.
    */
   public async getRelated(id: number | string, limit: number = 20): Promise<PaginatedResponse<DeezerArtist>> {
     return this.client.request<PaginatedResponse<DeezerArtist>>(`/artist/${id}/related`, { limit });
   }
 
   /**
-   * Smart radio baseada nesse artista.
+   * Fetch smart radio based on the artist.
    */
   public async getRadio(id: number | string, limit: number = 20): Promise<PaginatedResponse<DeezerTrack>> {
     return this.client.request<PaginatedResponse<DeezerTrack>>(`/artist/${id}/radio`, { limit });
   }
 
   /**
-   * Playlists editoriais e públicas que contém faixas desse artista.
+   * Fetch playlists containing tracks of the artist.
    */
-  public async getPlaylists(id: number | string, limit: number = 20): Promise<PaginatedResponse<DeezerPlaylist>> {
-    return this.client.request<PaginatedResponse<DeezerPlaylist>>(`/artist/${id}/playlists`, { limit });
+  public async getPlaylists(
+    id: number | string,
+    limit: number = 20,
+    index: number = 0
+  ): Promise<PaginatedResponse<DeezerPlaylist>> {
+    return this.client.request<PaginatedResponse<DeezerPlaylist>>(`/artist/${id}/playlists`, { limit, index });
   }
 
   /**
-   * Lista dos fãs mais apaixonados (que favoritaram o artista).
+   * Returns an async iterator to paginate over artist's playlists.
+   */
+  public getPlaylistsIterator(id: number | string, limit: number = 20): AsyncGenerator<DeezerPlaylist, void, unknown> {
+    return this.paginate<DeezerPlaylist>((index) => this.getPlaylists(id, limit, index));
+  }
+
+  /**
+   * Fetch user fans of the artist.
    */
   public async getFans(id: number | string, limit: number = 20): Promise<PaginatedResponse<DeezerUser>> {
     return this.client.request<PaginatedResponse<DeezerUser>>(`/artist/${id}/fans`, { limit });

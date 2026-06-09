@@ -3,32 +3,43 @@ import type { DeezerPlaylist, DeezerTrack, PaginatedResponse, DeezerUser } from 
 
 /**
  * PlaylistModule
- * Buscar playlists públicas, suas tracks e fãs.
+ * Fetch public playlists, their tracks, and fans.
  */
 export class PlaylistModule extends BaseModule {
   /**
-   * Carrega os metadados da playlist.
+   * Fetch metadata of a playlist.
    */
   public async get(id: number | string): Promise<DeezerPlaylist> {
     return this.client.request<DeezerPlaylist>(`/playlist/${id}`);
   }
 
   /**
-   * Carrega a lista completa de faixas dessa playlist.
+   * Fetch tracks of a playlist.
    */
-  public async getTracks(id: number | string, limit: number = 50): Promise<PaginatedResponse<DeezerTrack>> {
-    return this.client.request<PaginatedResponse<DeezerTrack>>(`/playlist/${id}/tracks`, { limit });
+  public async getTracks(
+    id: number | string,
+    limit: number = 50,
+    index: number = 0
+  ): Promise<PaginatedResponse<DeezerTrack>> {
+    return this.client.request<PaginatedResponse<DeezerTrack>>(`/playlist/${id}/tracks`, { limit, index });
   }
 
   /**
-   * Usuários que adicionaram essa playlist nos favoritos.
+   * Returns an async iterator to paginate over playlist tracks.
+   */
+  public getTracksIterator(id: number | string, limit: number = 50): AsyncGenerator<DeezerTrack, void, unknown> {
+    return this.paginate<DeezerTrack>((index) => this.getTracks(id, limit, index));
+  }
+
+  /**
+   * Fetch users who favorited this playlist.
    */
   public async getFans(id: number | string, limit: number = 20): Promise<PaginatedResponse<DeezerUser>> {
     return this.client.request<PaginatedResponse<DeezerUser>>(`/playlist/${id}/fans`, { limit });
   }
 
   /**
-   * Rádio inteligente gerada a partir da vibe dessa playlist.
+   * Smart radio generated from the playlist.
    */
   public async getRadio(id: number | string, limit: number = 20): Promise<PaginatedResponse<DeezerTrack>> {
     return this.client.request<PaginatedResponse<DeezerTrack>>(`/playlist/${id}/radio`, { limit });
