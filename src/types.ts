@@ -157,7 +157,18 @@ export interface DeezerChart {
 export interface DeezerSearchOptions {
   q: string;
   strict?: 'on';
-  order?: 'RANKING' | 'TRACK_ASC' | 'TRACK_DESC' | 'ARTIST_ASC' | 'ARTIST_DESC' | 'ALBUM_ASC' | 'ALBUM_DESC' | 'RATING_ASC' | 'RATING_DESC' | 'DURATION_ASC' | 'DURATION_DESC';
+  order?:
+    | 'RANKING'
+    | 'TRACK_ASC'
+    | 'TRACK_DESC'
+    | 'ARTIST_ASC'
+    | 'ARTIST_DESC'
+    | 'ALBUM_ASC'
+    | 'ALBUM_DESC'
+    | 'RATING_ASC'
+    | 'RATING_DESC'
+    | 'DURATION_ASC'
+    | 'DURATION_DESC';
   index?: number;
   limit?: number;
 }

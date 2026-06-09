@@ -16,7 +16,12 @@ export class PodcastModule extends BaseModule {
   /**
    * Fetch the list of episodes of a podcast.
    */
-  public async getEpisodes(id: number | string, limit: number = 20): Promise<PaginatedResponse<DeezerEpisode>> {
-    return this.client.request<PaginatedResponse<DeezerEpisode>>(`/podcast/${id}/episodes`, { limit });
+  public async getEpisodes(
+    id: number | string,
+    limit: number = 20
+  ): Promise<PaginatedResponse<DeezerEpisode>> {
+    return this.client.request<PaginatedResponse<DeezerEpisode>>(`/podcast/${id}/episodes`, {
+      limit,
+    });
   }
 }

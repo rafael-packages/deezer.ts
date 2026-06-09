@@ -30,7 +30,12 @@ export class EditorialModule extends BaseModule {
   /**
    * Fetch new releases and recommendations by genre/editorial.
    */
-  public async getReleases(id: number | string = 0, limit: number = 20): Promise<PaginatedResponse<DeezerAlbum>> {
-    return this.client.request<PaginatedResponse<DeezerAlbum>>(`/editorial/${id}/releases`, { limit });
+  public async getReleases(
+    id: number | string = 0,
+    limit: number = 20
+  ): Promise<PaginatedResponse<DeezerAlbum>> {
+    return this.client.request<PaginatedResponse<DeezerAlbum>>(`/editorial/${id}/releases`, {
+      limit,
+    });
   }
 }

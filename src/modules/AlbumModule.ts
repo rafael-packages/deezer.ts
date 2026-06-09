@@ -21,20 +21,29 @@ export class AlbumModule extends BaseModule {
     limit: number = 50,
     index: number = 0
   ): Promise<PaginatedResponse<DeezerTrack>> {
-    return this.client.request<PaginatedResponse<DeezerTrack>>(`/album/${id}/tracks`, { limit, index });
+    return this.client.request<PaginatedResponse<DeezerTrack>>(`/album/${id}/tracks`, {
+      limit,
+      index,
+    });
   }
 
   /**
    * Returns an async iterator to paginate over album tracks.
    */
-  public getTracksIterator(id: number | string, limit: number = 50): AsyncGenerator<DeezerTrack, void, unknown> {
+  public getTracksIterator(
+    id: number | string,
+    limit: number = 50
+  ): AsyncGenerator<DeezerTrack, void, unknown> {
     return this.paginate<DeezerTrack>((index) => this.getTracks(id, limit, index));
   }
 
   /**
    * Fetch users who favorited this album.
    */
-  public async getFans(id: number | string, limit: number = 20): Promise<PaginatedResponse<DeezerUser>> {
+  public async getFans(
+    id: number | string,
+    limit: number = 20
+  ): Promise<PaginatedResponse<DeezerUser>> {
     return this.client.request<PaginatedResponse<DeezerUser>>(`/album/${id}/fans`, { limit });
   }
 }

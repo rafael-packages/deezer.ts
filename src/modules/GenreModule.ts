@@ -23,14 +23,20 @@ export class GenreModule extends BaseModule {
   /**
    * Fetch artists associated with a genre.
    */
-  public async getArtists(id: number | string, limit: number = 20): Promise<PaginatedResponse<DeezerArtist>> {
+  public async getArtists(
+    id: number | string,
+    limit: number = 20
+  ): Promise<PaginatedResponse<DeezerArtist>> {
     return this.client.request<PaginatedResponse<DeezerArtist>>(`/genre/${id}/artists`, { limit });
   }
 
   /**
    * Fetch radio stations themed around a genre.
    */
-  public async getRadios(id: number | string, limit: number = 20): Promise<PaginatedResponse<DeezerRadio>> {
+  public async getRadios(
+    id: number | string,
+    limit: number = 20
+  ): Promise<PaginatedResponse<DeezerRadio>> {
     return this.client.request<PaginatedResponse<DeezerRadio>>(`/genre/${id}/radios`, { limit });
   }
 }

@@ -46,9 +46,9 @@ export class DeezerClient {
     this.options = {
       timeout: 5000,
       maxRequestsPerSecond: 50,
-      ...options
+      ...options,
     };
-    
+
     this.rateLimiter = new RateLimiter(this.options.maxRequestsPerSecond, 1000);
     this.cache = new CacheStore(60);
 
@@ -96,8 +96,10 @@ export class DeezerClient {
     params: Record<string, any> = {},
     options: { cache?: boolean; ttl?: number } = {}
   ): Promise<T> {
-    const url = new URL(`${DeezerClient.API_URL}${endpoint.startsWith('/') ? endpoint : `/${endpoint}`}`);
-    
+    const url = new URL(
+      `${DeezerClient.API_URL}${endpoint.startsWith('/') ? endpoint : `/${endpoint}`}`
+    );
+
     Object.entries(params).forEach(([key, value]) => {
       if (value !== undefined && value !== null) {
         url.searchParams.append(key, String(value));
@@ -116,8 +118,8 @@ export class DeezerClient {
     let requestOptions: RequestInit = {
       method: 'GET',
       headers: {
-        'Accept': 'application/json',
-      }
+        Accept: 'application/json',
+      },
     };
 
     if (this.options.timeout) {
@@ -138,10 +140,13 @@ export class DeezerClient {
         const response = await fetch(requestUrl, requestOptions);
 
         if (!response.ok) {
-          throw new DeezerError(`HTTP Error: ${response.status} ${response.statusText}`, response.status);
+          throw new DeezerError(
+            `HTTP Error: ${response.status} ${response.statusText}`,
+            response.status
+          );
         }
 
-        let data = await response.json() as any;
+        let data = (await response.json()) as any;
 
         // Deezer API sometimes returns an error inside an HTTP 200 OK response
         if (data.error) {

@@ -30,7 +30,10 @@ export class RadioModule extends BaseModule {
   /**
    * Fetch tracks available on the radio channel.
    */
-  public async getTracks(id: number | string, limit: number = 20): Promise<PaginatedResponse<DeezerTrack>> {
+  public async getTracks(
+    id: number | string,
+    limit: number = 20
+  ): Promise<PaginatedResponse<DeezerTrack>> {
     return this.client.request<PaginatedResponse<DeezerTrack>>(`/radio/${id}/tracks`, { limit });
   }
 }

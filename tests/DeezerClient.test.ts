@@ -22,14 +22,17 @@ describe('DeezerClient', () => {
 
   it('should be able to fetch an artist (Eminem)', async () => {
     const fetchSpy = spyOn(globalThis, 'fetch').mockImplementation(async () => {
-      return new Response(JSON.stringify({
-        id: 13,
-        name: 'Eminem',
-        type: 'artist'
-      }), {
-        status: 200,
-        headers: { 'Content-Type': 'application/json' }
-      });
+      return new Response(
+        JSON.stringify({
+          id: 13,
+          name: 'Eminem',
+          type: 'artist',
+        }),
+        {
+          status: 200,
+          headers: { 'Content-Type': 'application/json' },
+        }
+      );
     });
 
     const artist = await client.artists.get(13);
@@ -41,16 +44,19 @@ describe('DeezerClient', () => {
 
   it('should throw a DeezerError when the API returns an error (e.g., artist does not exist)', async () => {
     const fetchSpy = spyOn(globalThis, 'fetch').mockImplementation(async () => {
-      return new Response(JSON.stringify({
-        error: {
-          type: 'DataException',
-          message: 'no data',
-          code: 800
+      return new Response(
+        JSON.stringify({
+          error: {
+            type: 'DataException',
+            message: 'no data',
+            code: 800,
+          },
+        }),
+        {
+          status: 200, // Deezer often returns 200 even with an error in the payload
+          headers: { 'Content-Type': 'application/json' },
         }
-      }), {
-        status: 200, // Deezer often returns 200 even with an error in the payload
-        headers: { 'Content-Type': 'application/json' }
-      });
+      );
     });
 
     expect(client.artists.get(9999999999)).rejects.toThrow(DeezerError);
