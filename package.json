@@ -4,6 +4,9 @@
   "description": "Um client TypeScript fortemente tipado e com zero dependências para a API do Deezer",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
   "type": "module",
   "scripts": {
     "build": "tsc",
